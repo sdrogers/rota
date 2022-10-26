@@ -13,14 +13,14 @@ from wtforms.validators import DataRequired
 load_dotenv()
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+application.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+application.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(application)
 
-Bootstrap(app)
+Bootstrap(application)
 
 class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -88,12 +88,12 @@ def compute_totals():
     return totals_list
 
     
-@app.route("/")
+@application.route("/")
 def index():
     totals_list = compute_totals()
     return render_template("index.html", totals_list=totals_list)
 
-@app.route("/add_member", methods=['GET', 'POST'])
+@application.route("/add_member", methods=['GET', 'POST'])
 def add_member():
     form = MemberForm()
     current_member_names = set([m.name.lower() for m in Member.query.all()])
@@ -109,7 +109,7 @@ def add_member():
             return redirect(url_for('index'))
     return render_template('add_member.html', form=form, message=message)
 
-@app.route('/add_entry', methods=['GET', 'POST'])
+@application.route('/add_entry', methods=['GET', 'POST'])
 def add_entry():
     form = LogEntryForm()
     if form.validate_on_submit():
@@ -121,7 +121,7 @@ def add_entry():
         return redirect(url_for('index'))
     return render_template('add_entry.html', form=form)
 
-@app.route('/single_member', methods=['GET'])
+@application.route('/single_member', methods=['GET'])
 def single_member():
     member_id = request.args.get('member_id', None)
     if member_id is None:
@@ -131,14 +131,14 @@ def single_member():
     member = Member.query.filter_by(id=member_id).first()
     return render_template('entry_list.html', entries=entries, member_name=member.name)
 
-@app.route('/all_entries', methods=['GET'])
+@application.route('/all_entries', methods=['GET'])
 def all_entries():
     entries = LogEntry.query.all()
     entries.sort(key=lambda x: x.date, reverse=True)
     member_name = 'All members'
     return render_template('entry_list.html', entries=entries, member_name=member_name)
 
-@app.route('/delete_entry', methods=['GET'])
+@application.route('/delete_entry', methods=['GET'])
 def delete_entry():
     entry_id = request.args.get('entry_id')
     entry = LogEntry.query.filter_by(id=entry_id).first()
@@ -146,7 +146,7 @@ def delete_entry():
     db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/delete_member', methods=['GET'])
+@application.route('/delete_member', methods=['GET'])
 def delete_member():
     member_id = request.args.get('member_id')
     entries = LogEntry.query.filter_by(member_id=member_id)
@@ -158,7 +158,7 @@ def delete_member():
     return redirect(url_for('index'))
 
     
-@app.route('/list_members', methods=['GET'])
+@application.route('/list_members', methods=['GET'])
 def list_members():
     members = Member.query.all()
     return render_template('member_list.html', members=members)
