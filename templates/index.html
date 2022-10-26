@@ -1,0 +1,55 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block styles %}
+{{ super() }}
+
+    <link rel="shortcut icon" href="#">
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Sans-Serif;
+        }
+    </style>    
+    
+{% endblock %}
+
+
+{% block content %}
+        <h1>Duty Rota</h1>
+        <div>
+            <hr>
+            <div>
+                <p class="lead">
+                    The table below lists the number of races and duty for each member. The ratio is the proportion of total activities for each member that were duties. The lower the number, the more duty due.
+                </p>
+            </div>
+            <div id="table"></div>
+            <div>
+                <a href="/add_member">Add a new member</a>
+                <a href="/add_entry">Add a new entry</a>
+                <a href="/all_entries">View all entries</a>
+                <a href="/list_members">View all members</a>
+            </div>
+        </div>
+        <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+        <script>
+            const tableDiv = document.getElementById('table');
+            const grid = new gridjs.Grid({
+                columns: [
+                    {id: 'member', name: 'member', width: "150px", formatter: (cell) => gridjs.html(`<a href="/single_member?member_name=${cell}">${cell}</b>`)},
+                    {id: 'race', name: 'race', width: "110px"},
+                    {id: 'ood', name: 'ood', width: "110px"},
+                    {id: 'safety', name: 'safety', width: "140px"},
+                    {id: 'duty_ratio', name: 'duty_ratio', formatter: (cell) => `${cell.toFixed(2)}%`, width: "150px"}
+                ],
+                pagination: true,
+                data: {{ totals_list | safe }},
+                sort: {
+                    enabled: true
+                },
+                search: true,
+                width: "660px"
+            });
+            grid.render(tableDiv);
+        </script> 
+{% endblock %} 

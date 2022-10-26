@@ -1,0 +1,10 @@
+python-dotenv
+Faker
+Flask
+Flask-Bootstrap4
+Flask-SQLAlchemy
+Flask-WTF
+PyMySQL
+SQLAlchemy
+WTForms
+WTForms-SQLAlchemy

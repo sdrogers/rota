@@ -1,0 +1,12 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<h1>Member list</h1>
+<ul>
+    {% for member in members %}
+    <li>{{member.name}}, {{member.id}} <a href="/delete_member?member_id={{member.id}}">delete</a></li>
+    {% endfor %}
+</ul>
+<a href="/">Return to summary</a>
+{% endblock %}
